@@ -5,6 +5,9 @@ import './index.css'
 import App from './App.jsx'
 import Fintrack from './pages/Fintrack/fintrack.jsx'
 
+
+
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
