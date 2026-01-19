@@ -1,5 +1,4 @@
 const express = require('express');
-// const mongoose = require('mongoose');
 // const dotenv = require('dotenv');
 // const FinanceData = require('./models/FinanceData'); // Importa o modelo
 
@@ -10,12 +9,8 @@ const app = express();
 app.use(express.json()); // Permite que o Express leia JSON no corpo das requisições
 
 const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/finance_app_db';
 
-// Conexão com o MongoDB
-// mongoose.connect(MONGO_URI)
-//   .then(() => console.log('MongoDB conectado com sucesso!'))
-//   .catch(err => console.error('Erro de conexão com MongoDB:', err));
+
 
 // ----------------------------------------------------------------------
 // FUNÇÃO DE CÁLCULO E PERSISTÊNCIA (Lógica de Negócio Central)
