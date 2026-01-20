@@ -6,8 +6,7 @@ const express = require('express');
 // dotenv.config();
 
 const app = express();
-app.use(express.json()); // Permite que o Express leia JSON no corpo das requisições
-
+app.use(express.json()); 
 const PORT = process.env.PORT || 3000;
 
 
