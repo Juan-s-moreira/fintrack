@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')
 // const dotenv = require('dotenv');
 // const FinanceData = require('./models/FinanceData'); // Importa o modelo
 
@@ -6,7 +7,8 @@ const express = require('express');
 // dotenv.config();
 
 const app = express();
-app.use(express.json()); 
+app.use(cors())
+app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 
@@ -44,11 +46,11 @@ const PORT = process.env.PORT || 3000;
 // token de autentificação
 
 app.get('/', (req, res) => {
-    const { token } = req.headers;
+    // const { token } = req.headers;
 
-    if (!token) {
-        return res.status(401).json({ error: 'Token de autenticação não fornecido.' });
-    }
+    // if (!token) {
+    //     return res.status(401).json({ error: 'Token de autenticação não fornecido.' });
+    // }
 
     return res.status(200).json({
         message: 'API RODANDO BICHINHO',
