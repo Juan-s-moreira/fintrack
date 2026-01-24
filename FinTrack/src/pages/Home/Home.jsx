@@ -11,7 +11,7 @@ function Home() {
             <img src="src/assets/wallet-home.png" alt="black-wallet" />
           </div>
           <div>
-            <h1 className='text-5xl font-bold m-5'>Welcome to
+            <h1 className='text-5xl font-bold m-5 text-gray-200'>Welcome to
               <span className='text-blue-500'> FinTrack</span>
             </h1>
             <p className='text-lg font-semibold text-gray-200 mb-6'>Track your finances effortlessly and take control of your goals.</p>
