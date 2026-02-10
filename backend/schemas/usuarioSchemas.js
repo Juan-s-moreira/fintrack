@@ -11,12 +11,12 @@ const registerSchema = Joi.object({
             'any.required': "esqueceu de butar a senha aqui, visse"
         }),
 
-    repeat_password:
-        Joi.ref('password')
-            .required()
-            .messages({
-                'any.only': "acho que as senhas tão diferentes, macho"
-            }),
+    repeat_password: Joi.any()
+        .valid(Joi.ref('password'))
+        .required()
+        .messages({
+            'any.only': "acho que as senhas tão diferentes, macho"
+        }),
 
     email: Joi.string()
         .email()
@@ -33,13 +33,17 @@ const registerSchema = Joi.object({
 const loginSchema = Joi.object({
     email: Joi.string()
         .email()
-        .required(),
+        .required()
+        .messages({
+            'string.email': "email inválido",
+            'any.required': "precisa do email pra entrar"
+        }),
 
 
     password: Joi.string()
-        .password()
         .messages({
-            'any.required': "bote a senha aqui bote"
+            'any.required': "bote a senha aqui bote",
+            'string.empty': "senha não pode ser vazia"
         })
 
 

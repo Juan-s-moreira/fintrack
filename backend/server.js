@@ -2,9 +2,13 @@ const express = require('express');
 const cors = require('cors')
 const dotenv = require('dotenv');
 const connectDB = require('./database');
-// const FinanceData = require('./models/FinanceData'); // Importa o modelo
+const FinanceData = require('./models/FinanceData'); // Importa o modelo
+const validar = require('./schemas/validate')
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const User = require('./models/User'); 
+const { loginSchema, registerSchema } = require('./schemas/usuarioSchemas')
 
-// Carrega variáveis de ambiente do arquivo .env
 dotenv.config();
 
 const app = express();
@@ -145,18 +149,47 @@ app.put('/api/financeiro/update', (req, res) => {
 
 
 
-app.post('/api/login', (req, res) => {
-    const { token } = req.headers;
+app.post('/api/login', validar(loginSchema), async (req, res) => {
+    // const { token } = req.headers;
     const { email, password } = req.body;
 
-    if (!token) {
-        return res.status(401).json({ error: "token obrigatório pufavo" })
+    try {
+        const user = await User.findOne({ email }).select('+password')
+
+        if (!user) {
+            return res.status(400).json({ error: 'email ou senha tão errados, painho' })
+        }
+
+        const senhaBate = await bcrypt.compare(password, user.password)
+
+        if (!senhaBate) {
+            return res.status(400).json({ error: 'email ou senha tão errados, painho' })
+        }
+
+        user.password = undefined
+
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: '1D' }
+        )
+        return res.status(200).json({
+            message: 'LOGIN REALIZADO COM SUCESSO painho',
+            token,
+            user
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "erro aqui com nois pai, tenta depois" })
     }
+    // if (!token) {
+    //     return res.status(401).json({ error: "token obrigatório pufavo" })
+    // }
 
     // TODO -  EMAIL VALIDO @
-    if (!email) {
-        return res.status(403).json({ error: "faltou email aqui" })
-    }
+    // if (!email) {
+    //     return res.status(403).json({ error: "faltou email aqui" })
+    // }
     // else {
 
     //     // TODO - >> 8 caracteres, caracteres especiais, letras e numeros
@@ -165,15 +198,31 @@ app.post('/api/login', (req, res) => {
 
     // }
 
-    return res.status(200).json({
-        message: 'LOGIN REALIZADO COM SUCESSO painho'
-    });
 });
 
-app.post('/api/register', (req, res) => {
-    return res.status(200).json({
-        message: 'REGISTRO REALIZADO COM SUCESSO painho'
-    });
+app.post('/api/register', validar(registerSchema), async (req, res) => {
+
+    const { email, password } = req.body
+
+    try {
+        if (await User.findOne({ email }))
+            return res.status(400).json({ error: "vish painho, já tem esse email aqui" })
+
+        const hash = await bcrypt.hash(password, 10)
+
+        const user = await User.create({
+            email,
+            password: hash,
+        })
+
+        user.password = undefined
+
+        return res.status(200).json({
+            message: 'REGISTRO REALIZADO COM SUCESSO painho'
+        });
+    } catch (err) {
+        return res.status(400).json({ error: "deu bom aqui não veinho, vamo de novo" })
+    }
 });
 
 
