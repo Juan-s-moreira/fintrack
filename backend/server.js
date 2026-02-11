@@ -2,13 +2,14 @@ const express = require('express');
 const cors = require('cors')
 const dotenv = require('dotenv');
 const connectDB = require('./database');
-const FinanceData = require('./models/FinanceData'); // Importa o modelo
 const validar = require('./schemas/validate')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const User = require('./models/User'); 
+const User = require('./models/User');
 const { loginSchema, registerSchema } = require('./schemas/usuarioSchemas')
-
+const authMiddleware = require('./middlewares/auth')
+const FinanceData = require('./models/FinanceData');
+const { transactionSchema } = require('./schemas/financeSchema')
 dotenv.config();
 
 const app = express();
@@ -66,10 +67,26 @@ app.get('/', (req, res) => {
 });
 
 
-app.post('/api/financeiro/add', (req, res) => {
-    return res.status(200).json({
-        message: 'DADO ADICIONADO COM SUCESSO painho'
-    });
+app.post('/api/financeiro/add', authMiddleware, validar(transactionSchema), async (req, res) => {
+
+    try {
+        const { description, value, type } = req.body
+
+        const transactions = await FinanceData.create({
+            description,
+            value,
+            type,
+            user: req.userId
+        })
+        return res.status(200).json({
+            message: 'DADO ADICIONADO COM SUCESSO painho',
+            transactions,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(400).json({ error: 'erro ao adicionar' })
+
+    }
 })
 
 
@@ -79,10 +96,13 @@ app.delete('/api/financeiro/delete', (req, res) => {
     });
 })
 
-app.get('/api/financeiro/get', (req, res) => {
-    return res.status(200).json({
-        message: 'DADO PEGADO COM SUCESSO painho'
-    });
+app.get('/api/financeiro/get', authMiddleware, async (req, res) => {
+    try {
+        const transactions = await FinanceData.find({ user: req.userId }).sort({ createdAt: -1 })
+        return res.status(200).json(transactions);
+    } catch (error) {
+        return res.status(400).json({ error: "erro ao verificar dados" })
+    }
 })
 
 app.put('/api/financeiro/update', (req, res) => {
@@ -208,7 +228,7 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
         if (await User.findOne({ email }))
             return res.status(400).json({ error: "vish painho, já tem esse email aqui" })
 
-        const hash = await bcrypt.hash(password, 10)
+        // const hash = await bcrypt.hash(password, 10)
 
         const user = await User.create({
             email,
