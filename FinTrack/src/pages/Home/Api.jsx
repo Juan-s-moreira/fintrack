@@ -18,12 +18,7 @@ const Api = () => {
                 setMessage("faltou a API aqui veinho")
             });
 
-        // fetch('http://localhost:3000/').then((res) => res.json()).then((data) => {
-        //     setMessage(data.message);
-        // }).catch(err => {
-        //     setMessage('Erro ao conectar com a API');
-        //     setMessage('Erro ao conectar com a API', err);
-        // }, []);
+
     }, []);
 
     return (
