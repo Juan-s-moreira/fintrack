@@ -16,8 +16,8 @@ function Home() {
             </h1>
             <p className='text-lg font-semibold text-gray-200 mb-6'>Track your finances effortlessly and take control of your goals.</p>
 
-            <Link to="/fintrack" className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-full transition-all duration-200 shadow-md hover:shadow-lg'>
-              Wallet home
+            <Link to="/login" className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-full transition-all duration-200 shadow-md hover:shadow-lg'>
+              Get Started
             </Link>
           </div>
         </div>
