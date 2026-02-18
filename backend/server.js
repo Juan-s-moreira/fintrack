@@ -55,10 +55,26 @@ app.post('/api/financeiro/add', authMiddleware, validar(transactionSchema), asyn
 })
 
 
-app.delete('/api/financeiro/delete', (req, res) => {
-    return res.status(200).json({
-        message: 'DADO DELETADO COM SUCESSO painho'
-    });
+app.delete('/api/financeiro/:id', authMiddleware, async (req, res) => {
+    const { id } = req.params
+
+    try {
+        const deletedIncome = await FinanceData.findByIdAndDelete(id)
+
+
+        if (!deletedIncome) {
+            return res.status(404).json({ error: "Transação não encontrada!" })
+        }
+
+        return res.status(200).json({
+            message: "Transação apagada, painho,  foi  porreta"
+        })
+
+    } catch (error) {
+        console.log("Erro ao deletar", error);
+        return res.status(500).json({ error: "erro ao apagar Transação" })
+    }
+
 })
 
 app.get('/api/financeiro/get', authMiddleware, async (req, res) => {
@@ -70,10 +86,28 @@ app.get('/api/financeiro/get', authMiddleware, async (req, res) => {
     }
 })
 
-app.put('/api/financeiro/update', (req, res) => {
-    return res.status(200).json({
-        message: 'DADO ATUALIZADO COM SUCESSO painho'
-    });
+app.put('/api/financeiro/:id', authMiddleware, validar(transactionSchema), async (req, res) => {
+    const { id } = req.params
+    const updateIncome = req.body
+
+    try {
+        const updatedIncome = await FinanceData.findByIdAndUpdate(
+            id,
+            updateIncome,
+            { new: true, runValidators: true }
+        )
+
+        if (!updatedIncome) {
+            return res.status(404).json({ error: "Despesa não encontrada, painho" })
+        }
+        return res.status(200).json({
+            message: 'DADO ATUALIZADO COM SUCESSO painho',
+            data: updatedIncome
+        });
+    } catch (error) {
+        console.error("Erro ao atualizar, painho", error);
+        return res.status(500).json({ error: "Erro ao atualizar despesa" })
+    }
 })
 
 
@@ -113,7 +147,7 @@ app.post('/api/login', validar(loginSchema), async (req, res) => {
         console.error(error);
         return res.status(500).json({ error: "erro aqui com nois pai, tenta depois" })
     }
- 
+
 });
 
 app.post('/api/register', validar(registerSchema), async (req, res) => {

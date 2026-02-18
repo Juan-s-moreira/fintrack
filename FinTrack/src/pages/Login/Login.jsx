@@ -1,6 +1,7 @@
 import { useState } from "react"
-import axios from "axios"
+// import axios from "axios"
 import { Link, useNavigate } from "react-router-dom"
+import api from "../../services/api";
 
 import heroImage from '../../assets/wallet-home.png';
 
@@ -18,7 +19,7 @@ const Login = () => {
         setIsLoading(true)
 
         try {
-            const response = await axios.post('http://localhost:3000/api/login', { email, password })
+            const response = await api.post('/api/login', { email, password })
             const token = response.data.token
 
             localStorage.setItem('token', token)

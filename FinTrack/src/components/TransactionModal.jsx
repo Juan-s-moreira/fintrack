@@ -1,25 +1,61 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import api from '../services/api';
+import Swal from 'sweetalert2';
 
-const TransactionModal = ({ isOpen, onClose, type, onSuccess }) => {
+
+const TransactionModal = ({ isOpen, onClose, type, onSuccess, incomeToEdit }) => {
+
   const [description, setDescription] = useState('');
   const [value, setValue] = useState('');
 
+  const isEditing = !!incomeToEdit;
+
+  useEffect(() => {
+    if (isEditing && incomeToEdit) {
+      setDescription(incomeToEdit.description);
+      setValue(incomeToEdit.value);
+    } else {
+      setDescription('');
+      setValue('');
+    }
+  }, [isOpen, isEditing, incomeToEdit]);
+
   if (!isOpen) return null;
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const token = localStorage.getItem('token');
+    const transactionData = {
+      description,
+      value: Number(value),
+      type: isEditing ? incomeToEdit.type : type
+    };
 
-      await axios.post('http://localhost:3000/api/financeiro/add', {
-        description,
-        value: Number(value),
-        type
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+    try {
+      if (isEditing) {
+
+        await api.put(`/api/financeiro/${incomeToEdit._id}`, transactionData);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Updated!',
+          text: 'Transaction updated successfully.',
+          background: '#1f2937', color: '#f3f4f6',
+          timer: 1500, showConfirmButton: false
+        });
+
+      } else {
+        await api.post('/financeiro/add', transactionData);
+        Swal.fire({
+          icon: 'success',
+          title: 'Created!',
+          text: 'New transaction added.',
+          background: '#1f2937', color: '#f3f4f6',
+          timer: 1500, showConfirmButton: false
+        });
+      }
+
 
       setDescription('');
       setValue('');
@@ -27,27 +63,48 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess }) => {
       onClose();
 
     } catch (error) {
-      alert("Erro ao salvar, painho! " + error.message);
+      console.error("Erro ao salvar:", error);
+      const errorMsg = error.response?.data?.error || "Something went wrong, painho.";
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errorMsg,
+        background: '#1f2937', color: '#f3f4f6'
+      });
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50 backdrop-blur-sm">
-      {/*  Modal */}
-      <div className={`bg-gray-800 md:p-8 p-4 rounded-2xl md:w-96 w-56 border-2 ${type === 'income' ? 'border-emerald-500' : 'border-red-500'} shadow-2xl`}>
+  const currentType = isEditing ? incomeToEdit.type : type;
+  const isIncome = currentType === 'income';
 
-        <h2 className="md:text-2xl text-lg font-bold text-white mb-2 md:mb-6 uppercase tracking-wider text-center">
-          New {type === 'income' ? <span className="text-emerald-400">Revenue </span> : <span className="text-red-500">Despesa </span>}
+  return (
+    <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50 backdrop-blur-sm p-4">
+
+      <div className={`bg-gray-800 md:p-8 p-6 rounded-2xl w-full max-w-md border-2 ${isIncome ? 'border-emerald-500' : 'border-red-500'} shadow-2xl relative`}>
+
+        {/* Close */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+        >
+          X
+        </button>
+
+        <h2 className="text-2xl font-bold text-white mb-6 uppercase tracking-wider text-center">
+          {isEditing ? 'Edit Transaction' : (
+            isIncome ? <span className="text-emerald-400">New Income</span> : <span className="text-red-500">New Expense</span>
+          )}
         </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
           <div>
-            <label className="text-gray-400 text-sm ml-1">Description</label>
+            <label className="text-gray-400 text-sm ml-1 block mb-1">Description</label>
             <input
               type="text"
-              placeholder="Ex: Salary, Pizza..."
-              className="w-full bg-gray-900 text-white border border-gray-700 rounded-lg md:p-3 p-1 focus:outline-none focus:border-blue-500 transition-colors"
+              placeholder="Ex: Salary, Market..."
+              className="w-full bg-gray-900 text-white border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-blue-500 transition-colors"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
@@ -55,11 +112,11 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess }) => {
           </div>
 
           <div>
-            <label className="text-gray-400 text-sm ml-1">Amount (R$)</label>
+            <label className="text-gray-400 text-sm ml-1 block mb-1">Amount (R$)</label>
             <input
               type="number"
               placeholder="0.00"
-              className="w-full bg-gray-900 text-white border border-gray-700 rounded-lg md:p-3 p-1 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-gray-900 text-white border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-blue-500 transition-colors"
               value={value}
               onChange={(e) => setValue(e.target.value)}
               required
@@ -67,19 +124,19 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess }) => {
             />
           </div>
 
-          <div className="flex gap-3 md:mt-4 mt-2">
+          <div className="flex gap-3 mt-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 md:text-base text-sm  bg-gray-700 hover:bg-gray-600 text-white py-1.5 md:py-3 rounded-xl font-bold transition-all"
+              className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-bold transition-all"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className={`flex-1 text-sm md:text-base md:py-3 py-1.5 rounded-xl font-bold text-white transition-all ${type === 'income' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`}
+              className={`flex-1 py-3 rounded-xl font-bold text-white transition-all ${isIncome ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`}
             >
-              Save
+              {isEditing ? 'Update' : 'Save'}
             </button>
           </div>
         </form>

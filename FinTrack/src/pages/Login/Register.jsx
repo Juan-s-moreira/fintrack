@@ -1,5 +1,6 @@
 import { useState } from "react"
-import axios from "axios"
+// import axios from "axios"
+import api from "../../services/api";
 import { Link, useNavigate } from "react-router-dom"
 import heroImage from '../../assets/wallet-home.png';
 
@@ -22,7 +23,7 @@ const Register = () => {
         setIsLoading(true)
 
         try {
-            await axios.post('http://localhost:3000/api/register', {
+            await api.post('/api/register', {
                 email: email,
                 password: password,
                 repeat_password: repeatPassword

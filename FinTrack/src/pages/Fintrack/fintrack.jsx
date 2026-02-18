@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import TransactionModal from '../../components/TransactionModal'
 import { useNavigate } from 'react-router'
+import api from '../../services/api'
+import Swal from 'sweetalert2';
 
 
 const Fintrack = () => {
@@ -12,6 +13,7 @@ const Fintrack = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState('income');
+  const [editingIncome, setEditingIncome] = useState(null);
   const [transactions, setTransactions] = useState([]);
 
   const navigate = useNavigate()
@@ -23,18 +25,7 @@ const Fintrack = () => {
 
   const fetchFinanceData = async () => {
     try {
-      const token = localStorage.getItem('token')
-
-      if (!token) {
-        console.log('Sem token painho! Loga ai pa nois');
-        return
-      }
-
-      const response = await axios.get('http://localhost:3000/api/financeiro/get', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      const response = await api.get('/api/financeiro/get')
 
       const data = response.data
       setTransactions(data)
@@ -52,15 +43,63 @@ const Fintrack = () => {
       setBalance(totalIncome - totalExpense)
     } catch (error) {
       console.error('Erro ao buscar seus dados veinho', error);
+      if (error.response && error.response.status === 401) {
+        handleLogout();
+      }
     }
   }
+
   useEffect(() => {
     fetchFinanceData()
-  }, [])
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [])
 
   const handleOpenModal = (type) => {
+    setEditingIncome(null)
     setModalType(type)
     setIsModalOpen(true)
+  }
+
+  const handleEdit = (transaction) => {
+    setEditingIncome(transaction);
+    setIsModalOpen(true);
+  }
+
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: 'Tem certeza disso, painho?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      background: '#1f2937', color: '#f3f4f6',
+      confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes!'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await api.delete(`/api/financeiro/${id}`);
+
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'Transaction has been deleted.',
+          icon: 'success',
+          background: '#1f2937', color: '#f3f4f6',
+          timer: 1500, showConfirmButton: false
+        });
+
+        fetchFinanceData(); 
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: 'Could not delete.',
+          icon: 'error',
+          background: '#1f2937', color: '#f3f4f6'
+        });
+      }
+    }
   }
 
   return (
@@ -72,6 +111,7 @@ const Fintrack = () => {
         onClose={() => setIsModalOpen(false)}
         type={modalType}
         onSuccess={fetchFinanceData}
+        transactionToEdit={editingIncome}
 
       />
 
@@ -138,6 +178,7 @@ const Fintrack = () => {
                   <th className="p-3 md:p-4 font-semibold">Description</th>
                   <th className="p-3 md:p-4 font-semibold text-center">Type</th>
                   <th className="p-3 md:p-4 font-semibold text-right">Amount</th>
+                  <th className="p-3 md:p-4 font-semibold text-center">Actions</th>
                 </tr>
               </thead>
 
@@ -172,6 +213,27 @@ const Fintrack = () => {
                       <td className={`p-3 md:p-4 text-right font-bold text-sm md:text-base whitespace-nowrap ${item.type === 'income' ? 'text-emerald-400' : 'text-red-400'
                         }`}>
                         {item.type === 'income' ? '+' : '-'} R$ {item.value.toFixed(2)}
+                      </td>
+
+                      <td className="p-3 md:p-4 flex justify-center gap-2">
+                        {/*  EDITAR */}
+                        <button
+                          onClick={() => handleEdit(item)}
+                          className="p-2 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors"
+                          title="Edit Transaction"
+                        >
+                        
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></svg>
+                        </button>
+
+                        {/* EXCLUIR */}
+                        <button
+                          onClick={() => handleDelete(item._id)}
+                          className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
+                          title="Delete Transaction"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>
+                        </button>
                       </td>
 
                     </tr>
