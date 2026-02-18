@@ -1,5 +1,5 @@
 import { useState } from "react"
-import api from "../../services/api";
+import api from "../../services/apii";
 import { Link, useNavigate } from "react-router-dom"
 import heroImage from '../../assets/wallet-home.png';
 
