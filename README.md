@@ -1,12 +1,14 @@
 
-# FinTrack
-FinTrack is a personal finance tracking application designed to help users manage their expenses, income, and budgets effectively.
+# <img src="./FinTrack/src/assets/wallet-home.png" width="86" height="86"> FinTrack
+
+**FinTrack is a personal finance tracking application designed to help users manage their expenses, income, and budgets effectively.**
 
 ## Features
 - **Expense Tracking**: Easily log and categorize your expenses.
 - **Income Management**: Keep track of your income sources.
-- **Budgeting Tools**: Set and monitor budgets to stay on track.
-- **Reports**: Generate visual reports to analyze your financial health.
+- **Transaction History**: View a detailed log of all your transactions, including date, amount and category.
+- **Editing Transactions**: Modify existing transactions to correct any mistakes or update details.
+- **Deleting Transactions**: Remove transactions that are no longer relevant or were entered by mistake.
 
 ## Installation
 1. Clone the repository:
@@ -23,9 +25,13 @@ FinTrack is a personal finance tracking application designed to help users manag
     ```
 
 ## Usage
-To start the application, run:
+To start Frontend, run:
 ```bash
-npm start
+npm run dev
+```
+To start Backendend, run:
+```bash
+npm run start
 ```
 
 ## Contributing
