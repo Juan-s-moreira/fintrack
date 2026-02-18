@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import TransactionModal from '../../components/TransactionModal'
 import { useNavigate } from 'react-router'
-import api from '../../services/api'
+import api from '../../services/Api'
 import Swal from 'sweetalert2';
 
 
@@ -25,7 +25,7 @@ const Fintrack = () => {
 
   const fetchFinanceData = async () => {
     try {
-      const response = await api.get('/api/financeiro/get')
+      const response = await api.get('/financeiro/get')
 
       const data = response.data
       setTransactions(data)
@@ -79,7 +79,7 @@ const Fintrack = () => {
 
     if (result.isConfirmed) {
       try {
-        await api.delete(`/api/financeiro/${id}`);
+        await api.delete(`/financeiro/${id}`);
 
         Swal.fire({
           title: 'Deleted!',

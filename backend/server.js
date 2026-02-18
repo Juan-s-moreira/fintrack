@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 });
 
 
-app.post('/api/financeiro/add', authMiddleware, validar(transactionSchema), async (req, res) => {
+app.post('/financeiro/add', authMiddleware, validar(transactionSchema), async (req, res) => {
 
     try {
         const { description, value, type } = req.body
@@ -55,7 +55,7 @@ app.post('/api/financeiro/add', authMiddleware, validar(transactionSchema), asyn
 })
 
 
-app.delete('/api/financeiro/:id', authMiddleware, async (req, res) => {
+app.delete('/financeiro/:id', authMiddleware, async (req, res) => {
     const { id } = req.params
 
     try {
@@ -77,7 +77,7 @@ app.delete('/api/financeiro/:id', authMiddleware, async (req, res) => {
 
 })
 
-app.get('/api/financeiro/get', authMiddleware, async (req, res) => {
+app.get('/financeiro/get', authMiddleware, async (req, res) => {
     try {
         const transactions = await FinanceData.find({ user: req.userId }).sort({ createdAt: -1 })
         return res.status(200).json(transactions);
@@ -86,7 +86,7 @@ app.get('/api/financeiro/get', authMiddleware, async (req, res) => {
     }
 })
 
-app.put('/api/financeiro/:id', authMiddleware, validar(transactionSchema), async (req, res) => {
+app.put('/financeiro/:id', authMiddleware, validar(transactionSchema), async (req, res) => {
     const { id } = req.params
     const updateIncome = req.body
 
@@ -115,7 +115,7 @@ app.put('/api/financeiro/:id', authMiddleware, validar(transactionSchema), async
 
 // ROTAS DA API / LOGIN
 
-app.post('/api/login', validar(loginSchema), async (req, res) => {
+app.post('/login', validar(loginSchema), async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -150,7 +150,7 @@ app.post('/api/login', validar(loginSchema), async (req, res) => {
 
 });
 
-app.post('/api/register', validar(registerSchema), async (req, res) => {
+app.post('/register', validar(registerSchema), async (req, res) => {
 
     const { email, password } = req.body
 
@@ -177,7 +177,7 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
 });
 
 
-app.put('/api/forgetPassword', (req, res) => {
+app.put('/forgetPassword', (req, res) => {
     return res.status(200).json({
         message: 'SENHA ALTERADA COM SUCESSO painho'
     });

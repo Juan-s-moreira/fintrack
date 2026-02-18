@@ -1,7 +1,6 @@
 import { useState } from "react"
-// import axios from "axios"
 import { Link, useNavigate } from "react-router-dom"
-import api from "../../services/api";
+import api from "../../services/Api"
 
 import heroImage from '../../assets/wallet-home.png';
 
@@ -19,7 +18,7 @@ const Login = () => {
         setIsLoading(true)
 
         try {
-            const response = await api.post('/api/login', { email, password })
+            const response = await api.post('/login', { email, password })
             const token = response.data.token
 
             localStorage.setItem('token', token)
@@ -116,7 +115,7 @@ const Login = () => {
             </div>
 
             <div className="hidden md:flex md:w-1/2 bg-gray-900 items-center justify-center relative border-l border-gray-800">
-            <div className="absolute inset-0 bg-blue-600/20 backdrop-blur-[1px]"></div>
+                <div className="absolute inset-0 bg-blue-600/20 backdrop-blur-[1px]"></div>
                 <img
                     src={bgImage}
                     alt="FinTrack Wallet"

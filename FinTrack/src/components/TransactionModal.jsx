@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
+import api from '../services/Api';
 import Swal from 'sweetalert2';
 
 
@@ -35,7 +35,7 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess, incomeToEdit }) =>
     try {
       if (isEditing) {
 
-        await api.put(`/api/financeiro/${incomeToEdit._id}`, transactionData);
+        await api.put(`/financeiro/${incomeToEdit._id}`, transactionData);
 
         Swal.fire({
           icon: 'success',
@@ -86,7 +86,7 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess, incomeToEdit }) =>
         {/* Close */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer text-2xl hover:scale-110"
         >
           X
         </button>
@@ -128,13 +128,13 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess, incomeToEdit }) =>
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-bold transition-all"
+              className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-bold transition-all cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className={`flex-1 py-3 rounded-xl font-bold text-white transition-all ${isIncome ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`}
+              className={`flex-1 py-3 rounded-xl font-bold cursor-pointer text-white transition-all ${isIncome ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`}
             >
               {isEditing ? 'Update' : 'Save'}
             </button>
