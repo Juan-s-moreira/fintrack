@@ -5,7 +5,7 @@ import walletImg from '../../assets/wallet-home.png'
 function Home() {
   return (
     <>
-      <div className='bg-gray-900 h-screen flex flex-col text-center text-white'>
+      <div className='bg-gray-900 md:h-screen h-[100dvh] flex flex-col text-center text-white'>
         <div className='m-auto'>
           <div className='border-3 border-blue-500 rounded-full h-[14rem] w-[14rem] mx-auto my-12'>
             <img src={walletImg} alt="black-wallet" />
