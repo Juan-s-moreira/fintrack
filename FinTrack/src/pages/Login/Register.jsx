@@ -1,5 +1,6 @@
 import { useState } from "react"
 import api from "../../services/apii";
+import Swal from 'sweetalert2'
 import { Link, useNavigate } from "react-router-dom"
 import heroImage from '../../assets/wallet-home.png';
 
@@ -16,25 +17,51 @@ const Register = () => {
         e.preventDefault()
 
         if (password !== repeatPassword) {
-            return alert("Ei painho, as senhas não batem! Dá uma olhada aí.")
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Ei painho, ta errado!',
+                background: '#1f2937', color: '#f3f4f6',
+                confirmButtonColor: '#ef4444'
+            })
+            return
         }
 
         setIsLoading(true)
 
         try {
-            await api.post('/register', {
+            const { status } = await api.post('/register', {
                 email: email,
                 password: password,
                 repeat_password: repeatPassword
             })
 
-            alert("Conta criada com sucesso, painho! Bora fazer o login.")
-            navigate('/login')
+            if (status === 201 || status === 200) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Account Created!',
+                    text: 'Welcome to FinTrack. Please login.',
+                    background: '#1f2937', color: '#f3f4f6',
+                    confirmButtonColor: '#3b82f6', // Azul
+                    timer: 2000,
+                    showConfirmButton: false
+                })
+
+                navigate('/login')
+            }
+
 
         } catch (error) {
 
-            const joiMessage = error.response?.data?.message || error.response?.data?.error || "Erro desconhecido"
-            alert("Eita! O servidor disse: " + joiMessage)
+            const errorMessage = error.response?.data?.message || 'Registration failed. Try again.'
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Registration Failed',
+                text: errorMessage,
+                background: '#1f2937', color: '#f3f4f6',
+                confirmButtonColor: '#ef4444'
+            })
             setIsLoading(false)
         }
     }
