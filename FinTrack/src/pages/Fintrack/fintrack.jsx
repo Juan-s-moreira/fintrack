@@ -108,10 +108,14 @@ const Fintrack = () => {
 
       <TransactionModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false)
+          setEditingIncome(null);
+        }}
+
         type={modalType}
         onSuccess={fetchFinanceData}
-        transactionToEdit={editingIncome}
+        incomeToEdit={editingIncome}
 
       />
 
