@@ -119,7 +119,7 @@ app.put('/financeiro/:id', authMiddleware, validar(transactionSchema), async (re
 
 // ROTAS DA API / LOGIN
 
-app.post('/api/login', validar(loginSchema), async (req, res) => {
+app.post('/login', validar(loginSchema), async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -160,7 +160,7 @@ app.post('/api/login', validar(loginSchema), async (req, res) => {
 
 });
 
-app.post('/api/register', validar(registerSchema), async (req, res) => {
+app.post('/register', validar(registerSchema), async (req, res) => {
 
     const { email, password } = req.body
 
@@ -209,7 +209,7 @@ app.put('/forgetPassword', (req, res) => {
 // autenticação via SMS - encaminhar email de confirmação, captcha !TODO
 
 
-app.post('/api/verify-email', async (req, res) => {
+app.post('/verify-email', async (req, res) => {
     const { email, code } = req.body;
 
     try {
