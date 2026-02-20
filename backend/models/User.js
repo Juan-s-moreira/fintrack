@@ -17,7 +17,13 @@ const UserSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-    }
+    },
+    isVerified: {
+        type: Boolean, default: false
+    },
+    verificationCode: {
+        type: String
+    },
 })
 
 const User = mongoose.model('User', UserSchema)

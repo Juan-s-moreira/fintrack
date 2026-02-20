@@ -3,6 +3,8 @@ import api from "../../services/apii";
 import Swal from 'sweetalert2'
 import { Link, useNavigate } from "react-router-dom"
 import heroImage from '../../assets/wallet-home.png';
+import CodeVerificationModal from "../../components/CodeVerficationModal";
+
 
 const Register = () => {
 
@@ -10,6 +12,10 @@ const Register = () => {
     const [password, setPassword] = useState('')
     const [repeatPassword, setRepeatPassword] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [registeredEmail, setRegisteredEmail] = useState('');
     const navigate = useNavigate()
 
 
@@ -37,17 +43,9 @@ const Register = () => {
             })
 
             if (status === 201 || status === 200) {
-                await Swal.fire({
-                    icon: 'success',
-                    title: 'Account Created!',
-                    text: 'Welcome to FinTrack. Please login.',
-                    background: '#1f2937', color: '#f3f4f6',
-                    confirmButtonColor: '#3b82f6', // Azul
-                    timer: 2000,
-                    showConfirmButton: false
-                })
+                setRegisteredEmail(email); 
+                setIsModalOpen(true);
 
-                navigate('/login')
             }
 
 
@@ -68,6 +66,8 @@ const Register = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white p-4 relative overflow-hidden">
+
+
             <div className="w-full max-w-md bg-gray-800 border border-gray-700 p-8 rounded-3xl shadow-2xl z-10">
                 <div className="flex justify-center mb-6">
                     <img src={heroImage} alt="FinTrack Logo" className="w-20 h-20 object-contain drop-shadow-lg" />
@@ -77,6 +77,14 @@ const Register = () => {
                     <h2 className="text-3xl font-extrabold tracking-tight">Create Account</h2>
                     <p className="mt-2 text-sm text-gray-400">Join <span className="text-blue-500 font-bold">FinTrack</span></p>
                 </div>
+
+                <CodeVerificationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                email={registeredEmail}
+                onSuccess={() => navigate('/login')}
+                />
+
 
                 <form onSubmit={handleRegister} className="space-y-5">
 

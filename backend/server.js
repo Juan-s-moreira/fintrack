@@ -1,6 +1,10 @@
 const express = require('express');
 const cors = require('cors')
 const dotenv = require('dotenv');
+
+dotenv.config();
+
+
 const connectDB = require('./database');
 const validar = require('./schemas/validate')
 const jwt = require('jsonwebtoken');
@@ -10,7 +14,7 @@ const { loginSchema, registerSchema } = require('./schemas/usuarioSchemas')
 const authMiddleware = require('./middlewares/auth')
 const FinanceData = require('./models/FinanceData');
 const { transactionSchema } = require('./schemas/financeSchema')
-dotenv.config();
+const transport = require('./services/mailer')
 
 const app = express();
 app.use(cors())
@@ -115,7 +119,7 @@ app.put('/financeiro/:id', authMiddleware, validar(transactionSchema), async (re
 
 // ROTAS DA API / LOGIN
 
-app.post('/login', validar(loginSchema), async (req, res) => {
+app.post('/api/login', validar(loginSchema), async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -124,6 +128,12 @@ app.post('/login', validar(loginSchema), async (req, res) => {
         if (!user) {
             return res.status(400).json({ error: 'email ou senha tão errados, painho' })
         }
+
+
+        if (!user.isVerified) {
+            return res.status(403).json({ error: 'Você precisa verificar seu e-mail primeiro, painho!' });
+        }
+
 
         const checkPassword = await bcrypt.compare(password, user.password)
 
@@ -150,32 +160,42 @@ app.post('/login', validar(loginSchema), async (req, res) => {
 
 });
 
-app.post('/register', validar(registerSchema), async (req, res) => {
+app.post('/api/register', validar(registerSchema), async (req, res) => {
 
     const { email, password } = req.body
 
     try {
-        if (await User.findOne({ email }))
-            return res.status(400).json({ error: "vish painho, já tem esse email aqui" })
+        if (await User.findOne({ email })){
+            return res.status(400).json({ error: "vish painho, já tem esse email aqui" });
+        }
 
         const hash = await bcrypt.hash(password, 10)
 
-        const user = await User.create({
+        const code = await Math.floor(100000 + Math.random() * 900000).toString()
 
+        const user = await User.create({
             email,
             password: hash,
+            isVerified: false,
+            verificationCode: code
         })
 
         user.password = undefined
 
+        await transport.sendMail({
+            from: 'Fintrack App <juan.santosm03@gmail.com>',
+            to: email,
+            subject: 'Seu código de verificação - FinTrack',
+        });
+
         return res.status(200).json({
-            message: 'REGISTRO REALIZADO COM SUCESSO painho'
+            message: 'REGISTRO REALIZADO COM SUCESSO painho',
+            email: email
         });
     } catch (err) {
         return res.status(400).json({ error: "deu bom aqui não veinho, vamo de novo" })
     }
 });
-
 
 app.put('/forgetPassword', (req, res) => {
     return res.status(200).json({
@@ -187,6 +207,37 @@ app.put('/forgetPassword', (req, res) => {
 
 
 // autenticação via SMS - encaminhar email de confirmação, captcha !TODO
+
+
+app.post('/api/verify-email', async (req, res) => {
+    const { email, code } = req.body;
+
+    try {
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        if (user.isVerified) {
+            return res.status(400).json({ error: 'Conta já está verificada!' });
+        }
+
+        if (user.verificationCode !== code) {
+            return res.status(400).json({ error: 'Código inválido ou incorreto, painho.' });
+        }
+
+        user.isVerified = true;
+        user.verificationCode = undefined;
+        await user.save();
+
+        return res.status(200).json({ message: 'E-mail verificado com sucesso! Pode logar.' });
+
+    } catch (error) {
+        return res.status(500).json({ error: 'Erro ao verificar o código.' });
+    }
+});
 
 
 // Inicia o servidor
