@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 });
 
 
-app.post('/financeiro/add', authMiddleware, validar(transactionSchema), async (req, res) => {
+app.post('/api/financeiro/add', authMiddleware, validar(transactionSchema), async (req, res) => {
 
     try {
         const { description, value, type } = req.body
@@ -59,7 +59,7 @@ app.post('/financeiro/add', authMiddleware, validar(transactionSchema), async (r
 })
 
 
-app.delete('/financeiro/:id', authMiddleware, async (req, res) => {
+app.delete('/api/financeiro/:id', authMiddleware, async (req, res) => {
     const { id } = req.params
 
     try {
@@ -81,7 +81,7 @@ app.delete('/financeiro/:id', authMiddleware, async (req, res) => {
 
 })
 
-app.get('/financeiro/get', authMiddleware, async (req, res) => {
+app.get('/api/financeiro/get', authMiddleware, async (req, res) => {
     try {
         const transactions = await FinanceData.find({ user: req.userId }).sort({ createdAt: -1 })
         return res.status(200).json(transactions);
@@ -90,7 +90,7 @@ app.get('/financeiro/get', authMiddleware, async (req, res) => {
     }
 })
 
-app.put('/financeiro/:id', authMiddleware, validar(transactionSchema), async (req, res) => {
+app.put('/api/financeiro/:id', authMiddleware, validar(transactionSchema), async (req, res) => {
     const { id } = req.params
     const updateIncome = req.body
 
@@ -119,7 +119,7 @@ app.put('/financeiro/:id', authMiddleware, validar(transactionSchema), async (re
 
 // ROTAS DA API / LOGIN
 
-app.post('/login', validar(loginSchema), async (req, res) => {
+app.post('/api/login', validar(loginSchema), async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -160,12 +160,12 @@ app.post('/login', validar(loginSchema), async (req, res) => {
 
 });
 
-app.post('/register', validar(registerSchema), async (req, res) => {
+app.post('/api/register', validar(registerSchema), async (req, res) => {
 
     const { email, password } = req.body
 
     try {
-        if (await User.findOne({ email })){
+        if (await User.findOne({ email })) {
             return res.status(400).json({ error: "vish painho, já tem esse email aqui" });
         }
 
@@ -197,7 +197,7 @@ app.post('/register', validar(registerSchema), async (req, res) => {
     }
 });
 
-app.put('/forgetPassword', (req, res) => {
+app.put('/api/forgetPassword', (req, res) => {
     return res.status(200).json({
         message: 'SENHA ALTERADA COM SUCESSO painho'
     });
@@ -209,7 +209,7 @@ app.put('/forgetPassword', (req, res) => {
 // autenticação via SMS - encaminhar email de confirmação, captcha !TODO
 
 
-app.post('/verify-email', async (req, res) => {
+app.post('/api/verify-email', async (req, res) => {
     const { email, code } = req.body;
 
     try {
