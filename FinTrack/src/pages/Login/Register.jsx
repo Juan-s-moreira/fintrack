@@ -36,14 +36,14 @@ const Register = () => {
         setIsLoading(true)
 
         try {
-            const { status } = await api.post('/api/register', {
+            const { status } = await api.post('/register', {
                 email: email,
                 password: password,
                 repeat_password: repeatPassword
             })
 
             if (status === 201 || status === 200) {
-                setRegisteredEmail(email); 
+                setRegisteredEmail(email);
                 setIsModalOpen(true);
 
             }
@@ -79,10 +79,10 @@ const Register = () => {
                 </div>
 
                 <CodeVerificationModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                email={registeredEmail}
-                onSuccess={() => navigate('/login')}
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    email={registeredEmail}
+                    onSuccess={() => navigate('/login')}
                 />
 
 
