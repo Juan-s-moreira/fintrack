@@ -14,7 +14,7 @@ const { loginSchema, registerSchema } = require('./schemas/usuarioSchemas')
 const authMiddleware = require('./middlewares/auth')
 const FinanceData = require('./models/FinanceData');
 const { transactionSchema } = require('./schemas/financeSchema')
-const transport = require('./services/mailer')
+const { sendVerificationEmail } = require('./services/mailer')
 
 const app = express();
 app.use(cors())
@@ -180,13 +180,9 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
             verificationCode: code
         })
 
-        user.password = undefined
+        await sendVerificationEmail(email, code);
 
-        await transport.sendMail({
-            from: 'Fintrack App <juan.santosm03@gmail.com>',
-            to: email,
-            subject: 'Seu código de verificação - FinTrack',
-        });
+        user.password = undefined
 
         return res.status(200).json({
             message: 'REGISTRO REALIZADO COM SUCESSO painho',
