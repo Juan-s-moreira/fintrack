@@ -3,9 +3,9 @@ const axios = require('axios');
 const sendVerificationEmail = async (email, code) => {
     try {
         const response = await axios.post('https://api.brevo.com/v3/smtp/email', {
-            sender: { 
-                email: process.env.EMAIL_USER, 
-                name: 'FinTrack App' 
+            sender: {
+                email: process.env.EMAIL_USER,
+                name: 'FinTrack App'
             },
             to: [{ email: email }],
             subject: 'Seu código de verificação - FinTrack',
