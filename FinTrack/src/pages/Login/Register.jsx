@@ -45,11 +45,13 @@ const Register = () => {
             if (status === 201 || status === 200) {
                 setRegisteredEmail(email);
                 setIsModalOpen(true);
+                setIsLoading(false)
 
             }
 
 
         } catch (error) {
+            setIsLoading(false)
 
             const errorMessage = error.response?.data?.message || 'Registration failed. Try again.'
 
