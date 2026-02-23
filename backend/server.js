@@ -167,20 +167,20 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
 
     try {
 
-        const existinUser = await User.findOne({ email })
+        const existingUser = await User.findOne({ email })
 
         if (existingUser) {
 
-            if (existinUser.isVerified) {
+            if (existingUser.isVerified) {
                 return res.status(400).json({ error: "vish painho, já tem esse email aqui" });
             }
             const newCode = Math.floor(100000 + Math.random() * 900000).toString()
-            existinUser.verificationCode = newCode
+            existingUser.verificationCode = newCode
 
             const salt = await bcrypt.genSalt(10)
-            existinUser.password = await bcrypt.hash(password, salt)
+            existingUser.password = await bcrypt.hash(password, salt)
 
-            await existinUser.save()
+            await existingUser.save()
 
             await sendVerificationEmail(email, newCode)
 
@@ -192,7 +192,7 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
 
 
         const code = Math.floor(100000 + Math.random() * 900000).toString()
-        const salt = await bcrypt.hash(password, 10)
+        const salt = await bcrypt.genSalt(password, 10)
 
         const hashedPassword = await bcrypt.hash(passowrd, salt)
 
