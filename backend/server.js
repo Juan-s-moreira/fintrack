@@ -197,7 +197,7 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt)
 
 
-        const newUser = await User.create({
+        await User.create({
             email,
             password: hashedPassword,
             isVerified: false,
