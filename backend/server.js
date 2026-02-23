@@ -192,9 +192,9 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
 
 
         const code = Math.floor(100000 + Math.random() * 900000).toString()
-        const salt = await bcrypt.genSalt(password, 10)
+        const salt = await bcrypt.genSalt( 10)
 
-        const hashedPassword = await bcrypt.hash(passowrd, salt)
+        const hashedPassword = await bcrypt.hash(password, salt)
 
 
         const newUser = await User.create({
