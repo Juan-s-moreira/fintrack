@@ -175,10 +175,13 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
                 return res.status(400).json({ error: "vish painho, já tem esse email aqui" });
             }
             const newCode = Math.floor(100000 + Math.random() * 900000).toString()
-            existingUser.verificationCode = newCode
-
             const salt = await bcrypt.genSalt(10)
-            existingUser.password = await bcrypt.hash(password, salt)
+            const hashedPassword = await bcrypt.hash(password, salt);
+
+            existingUser.verificationCode = newCode
+            existingUser.password = hashedPassword
+
+            // existingUser.password = await bcrypt.hash(password, salt)
 
             await existingUser.save()
 
@@ -192,8 +195,7 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
 
 
         const code = Math.floor(100000 + Math.random() * 900000).toString()
-        const salt = await bcrypt.genSalt( 10)
-
+        const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
 
 
@@ -213,9 +215,26 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
             email: email
         });
     } catch (err) {
-        console.error( "Erro no registro, painho", err);
-        
-        return res.status(400).json({ error: "deu bom aqui não veinho, vamo de novo" })
+        // 🔥 A MÁGICA PARA O "TENTAR DE NOVO" FUNCIONAR:
+        // Se o MongoDB der erro 11000 (E-mail já existe) mesmo que o findOne tenha falhado
+        if (err.code === 11000) {
+            const userDeNovo = await User.findOne({ email });
+            if (userDeNovo && !userDeNovo.isVerified) {
+                // Se ele achou agora, repete a lógica de reenvio
+                const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+                userDeNovo.verificationCode = newCode;
+                await userDeNovo.save();
+                await sendVerificationEmail(email, newCode);
+
+                return res.status(200).json({
+                    message: "Faltou a verificação painho. Estamos enviando um novo código",
+                    email: email
+                });
+            }
+        }
+
+        console.error("Erro no registro, painho", err);
+        return res.status(400).json({ error: "deu bom aqui não veinho, vamo de novo" });
     }
 });
 
