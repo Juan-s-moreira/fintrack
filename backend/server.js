@@ -164,31 +164,57 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
 
     const { email, password } = req.body
 
+
     try {
-        if (await User.findOne({ email })) {
-            return res.status(400).json({ error: "vish painho, já tem esse email aqui" });
+
+        const existinUser = await User.findOne({ email })
+
+        if (existingUser) {
+
+            if (existinUser.isVerified) {
+                return res.status(400).json({ error: "vish painho, já tem esse email aqui" });
+            }
+            const newCode = Math.floor(100000 + Math.random() * 900000).toString()
+            existinUser.verificationCode = newCode
+
+            const salt = await bcrypt.genSalt(10)
+            existinUser.password = await bcrypt.hash(password, salt)
+
+            await existinUser.save()
+
+            await sendVerificationEmail(email, newCode)
+
+            return res.status(200).json({
+                message: "Faltou a verificação painho. Estamos enviando um novo código",
+                email: email
+            })
         }
 
-        const hash = await bcrypt.hash(password, 10)
 
-        const code = await Math.floor(100000 + Math.random() * 900000).toString()
+        const code = Math.floor(100000 + Math.random() * 900000).toString()
+        const salt = await bcrypt.hash(password, 10)
 
-        const user = await User.create({
+        const hashedPassword = await bcrypt.hash(passowrd, salt)
+
+
+        const newUser = await User.create({
             email,
-            password: hash,
+            password: hashedPassword,
             isVerified: false,
             verificationCode: code
         })
 
         await sendVerificationEmail(email, code);
 
-        user.password = undefined
+        // user.password = undefined
 
         return res.status(200).json({
-            message: 'REGISTRO REALIZADO COM SUCESSO painho',
+            message: 'Usuário criado com sucesso, painho! Verifique seu Email',
             email: email
         });
     } catch (err) {
+        console.error( "Erro no registro, painho", err);
+        
         return res.status(400).json({ error: "deu bom aqui não veinho, vamo de novo" })
     }
 });

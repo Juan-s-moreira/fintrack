@@ -10,6 +10,7 @@ const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate()
 
     const handleLogin = async (e) => {
@@ -67,18 +68,29 @@ const Login = () => {
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1 ml-1">
                                     Password
                                 </label>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    autoComplete="current-password"
-                                    required
-                                    className="appearance-none rounded-xl relative block w-full px-4 py-3 bg-gray-800 border border-gray-700 placeholder-gray-500 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:z-10 sm:text-sm transition-all"
-                                    placeholder="********"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
+                                <div className="relative">
 
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        id="password"
+                                        name="password"
+                                        autoComplete="current-password"
+                                        required
+                                        className="appearance-none rounded-xl relative block w-full px-4 py-3 bg-gray-800 border border-gray-700 placeholder-gray-500 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:z-10 sm:text-sm transition-all"
+                                        placeholder="********"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-black hover:text-blue-500 transition-colors cursor-pointer"
+                                        onClick={() => setShowPassword(!showPassword)}
+
+                                    >
+                                        {showPassword ? "Ocultar" : "Mostrar"}
+
+                                    </button>
+                                </div>
                             </div>
 
                         </div>

@@ -12,6 +12,8 @@ const Register = () => {
     const [password, setPassword] = useState('')
     const [repeatPassword, setRepeatPassword] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
+    const [showRepeatPassword, setShowRepeatPassword] = useState(false);
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -104,23 +106,47 @@ const Register = () => {
                     {/* PASSWORD */}
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1 ml-1">Password</label>
-                        <input
-                            type="password" required minLength="8"
-                            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-blue-500 transition-all"
-                            placeholder="Minimum 8 characters"
-                            value={password} onChange={(e) => setPassword(e.target.value)}
-                        />
+                        <div className="relative">
+
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                required minLength="8"
+                                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-blue-500 transition-all"
+                                placeholder="Minimum 8 characters"
+                                value={password} onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-500 transition-colors duration-300 cursor-pointer"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? "Ocultar" : "Mostrar"}
+
+                            </button>
+                        </div>
                     </div>
 
                     {/* REPEAT PASSWORD */}
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1 ml-1">Repeat Password</label>
-                        <input
-                            type="password" required minLength="8"
-                            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-blue-500 transition-all"
-                            placeholder="Type your password again"
-                            value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)}
-                        />
+                        <div className="relative">
+
+                            <input
+                                type={showRepeatPassword ? "text" : "password"}
+                                required minLength="8"
+                                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-blue-500 transition-all"
+                                placeholder="Type your password again"
+                                value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-500 transition-colors duration-300 cursor-pointer "
+                                onClick={() => setShowRepeatPassword(!showRepeatPassword)}
+
+                            >
+                                {showRepeatPassword ? "Ocultar" : "Mostrar"}
+                            </button>
+                        </div>
                     </div>
 
                     <button type="submit" disabled={isLoading} className={`w-full py-3 px-4 font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 mt-4 ${isLoading ? 'opacity-70' : ''}`}>
