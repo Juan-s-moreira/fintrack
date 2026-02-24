@@ -183,7 +183,15 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
 
             // existingUser.password = await bcrypt.hash(password, salt)
 
-            await existingUser.save()
+            // await existingUser.save()
+            await User.updateOne(
+                {
+                    _id: existingUser._id
+                },
+                {
+                    $set: {verificationCode: newCode, password: hashedPassword}
+                }
+            )
 
             await sendVerificationEmail(email, newCode)
 
@@ -215,6 +223,10 @@ app.post('/api/register', validar(registerSchema), async (req, res) => {
             email: email
         });
     } catch (err) {
+        console.log("CÓDIGO DO ERRO:", err.code); // Veja se aparece 11000
+        console.log("MENSAGEM:", err.message);
+        
+           // ... resto do seu código
         // 🔥 A MÁGICA PARA O "TENTAR DE NOVO" FUNCIONAR:
         // Se o MongoDB der erro 11000 (E-mail já existe) mesmo que o findOne tenha falhado
         if (err.code === 11000) {

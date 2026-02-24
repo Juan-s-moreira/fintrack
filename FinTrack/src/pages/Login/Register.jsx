@@ -149,7 +149,7 @@ const Register = () => {
                         </div>
                     </div>
 
-                    <button type="submit" disabled={isLoading} className={`w-full py-3 px-4 font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 mt-4 ${isLoading ? 'opacity-70' : ''}`}>
+                    <button type="submit" disabled={isLoading} className={`w-full py-3 px-4 font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-700 cursor-pointer transition-all shadow-lg shadow-blue-500/30 mt-4 ${isLoading ? 'opacity-70' : ''}`}>
                         {isLoading ? 'Criando conta...' : 'Cadastrar'}
                     </button>
 
