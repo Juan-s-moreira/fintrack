@@ -1,8 +1,7 @@
 # <img src="./FinTrack/src/assets/wallet-home.png" width="86" height="86"> FinTrack
+## Gestão Financeira para Microempreendedores (MEI)
 
-# FinTrack - Gestão Financeira para Microempreendedores
-
-O **FinTrack** é uma aplicação Full Stack desenvolvida para oferecer controle financeiro simplificado e seguro para microempreendedores (MEIs). O projeto foca em usabilidade, segurança de dados e uma interface moderna para facilitar a gestão de fluxo de caixa no dia a dia.
+O **FinTrack** é um **projeto pessoal Full Stack** desenvolvido para oferecer controle financeiro simplificado e seguro para microempreendedores. Como também sou MEI, projetei esta ferramenta para resolver as dores reais de quem precisa de agilidade, clareza e segurança na gestão do fluxo de caixa diário.
 
 ---
 
@@ -13,7 +12,6 @@ O **FinTrack** é uma aplicação Full Stack desenvolvida para oferecer controle
 - **Dashboard Financeiro:** Visualização intuitiva de saldos, entradas e saídas.
 - **CRUD de Transações:** Gerenciamento completo (Criar, Ler, Editar e Deletar) de ganhos e despesas.
 - **Interface Dark Mode:** Design responsivo e moderno otimizado para produtividade.
-<!-- - **PWA Ready:** Preparado para instalação como aplicativo em dispositivos móveis. -->
 
 ---
 
@@ -87,24 +85,12 @@ npm run dev
 🔮 Roadmap (Funcionalidades Futuras)
 [ ] Date Picker: Seleção de datas personalizadas para registros históricos.
 
-
+[ ] PWA (Progressive Web App): Em produção para permitir instalação como aplicativo mobile.
 
 [ ] Relatórios PDF: Exportação de relatórios mensais de movimentações.
 
 [ ] Gráficos Dinâmicos: Visualização de evolução financeira com Chart.js.
 
-🤝 Contribuição
-Contribuições são sempre bem-vindas!
-
-Faça um Fork do projeto.
-
-Crie uma Branch para sua Feature (git checkout -b feature/NovaFeature).
-
-Dê um Commit nas mudanças (git commit -m 'Add: Nova Feature').
-
-Dê um Push na Branch (git checkout push origin feature/NovaFeature).
-
-Abra um Pull Request.
 
 📄 Licença
 Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
