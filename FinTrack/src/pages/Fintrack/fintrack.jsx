@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import TransactionModal from '../../components/TransactionModal'
+import MonthSelector from '../../components/MonthSelector'
 import { useNavigate } from 'react-router'
 import api from '../../services/apii'
 import Swal from 'sweetalert2';
@@ -15,6 +16,11 @@ const Fintrack = () => {
   const [modalType, setModalType] = useState('income');
   const [editingIncome, setEditingIncome] = useState(null);
   const [transactions, setTransactions] = useState([]);
+  const [initialIncome, setInitialIncome] = useState(0);
+  const [period, setPeriod] = useState({
+    mes: new Date().getMonth() + 1,
+    ano: new Date().getFullYear()
+  })
 
   const navigate = useNavigate()
 
@@ -25,22 +31,25 @@ const Fintrack = () => {
 
   const fetchFinanceData = async () => {
     try {
-      const response = await api.get('/financeiro/get')
+      const response = await api.get(`/financeiro/monthly?month=${period.mes}&year=${period.ano}`)
 
-      const data = response.data
-      setTransactions(data)
+      const { transactions: monthlyTransactions, startingBalance } = response.data
 
-      const totalIncome = data
+      setTransactions(monthlyTransactions)
+      setInitialIncome(startingBalance)
+
+
+      const totalIncome = monthlyTransactions
         .filter(item => item.type === 'income')
         .reduce((acc, curr) => acc + curr.value, 0)
 
-      const totalExpense = data
+      const totalExpense = monthlyTransactions
         .filter(item => item.type === 'expense')
         .reduce((acc, curr) => acc + curr.value, 0)
 
       setIncome(totalIncome)
       setExpense(totalExpense)
-      setBalance(totalIncome - totalExpense)
+      setBalance(startingBalance + (totalIncome - totalExpense))
     } catch (error) {
       console.error('Erro ao buscar seus dados veinho', error);
       if (error.response && error.response.status === 401) {
@@ -53,7 +62,7 @@ const Fintrack = () => {
     fetchFinanceData()
   },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [])
+    [period])
 
   const handleOpenModal = (type) => {
     setEditingIncome(null)
@@ -122,6 +131,16 @@ const Fintrack = () => {
       <h1 className="md:text-5xl text-lg text-center font-bold mb-6 text-gray-200 ">WELCOME TO YOUR
         <span className="text-blue-500"> FINTRACK </span>
         DASHBOARD</h1>
+
+      <MonthSelector
+        mes={period.mes}
+        ano={period.ano}
+        onChangePeriod={setPeriod}
+      />
+
+      <div className="text-xs md:text-sm text-gray-400 mb-6 bg-gray-800/40 px-4 py-1.5 rounded-full border border-gray-700/50 shrink-0 select-none">
+        Starting balance from previous month: <span className="text-blue-400 font-bold">R$ {initialIncome.toFixed(2)}</span>
+      </div>
 
       <div className='w-full max-w-4xl flex gap-3 md:gap-6 flex-row shrink-0'>
         {/* INCOME */}

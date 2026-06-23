@@ -90,6 +90,53 @@ app.get('/api/financeiro/get', authMiddleware, async (req, res) => {
     }
 })
 
+app.get('/api/financeiro/monthly', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.userId;
+        
+        const dataHoje = new Date();
+        
+        const mes = req.query.mes ? Number(req.query.mes) : dataHoje.getMonth() + 1;
+        const ano = req.query.ano ? Number(req.query.ano) : dataHoje.getFullYear();
+
+       
+        const monthBegin = new Date(ano, mes - 1, 1, 0, 0, 0);
+        const monthEnd = new Date(ano, mes, 0, 23, 59, 59);
+
+        
+        const prevTransactions = await FinanceData.find({
+            user: userId,
+            createdAt: { $lt: inicioMes }
+        });
+
+        const startingbalance = transacoesAnteriores.reduce((acumulador, item) => {
+            if (item.type === 'entrada' || item.type === 'income') {
+                return acumulador + item.value;
+            } else {
+                return acumulador - item.value;
+            }
+        }, 0);
+
+        
+        const monthlyTransactions = await FinanceData.find({
+            user: userId,
+            createdAt: { $gte: inicioMes, $lte: fimMes }
+        }).sort({ createdAt: -1 });
+
+       
+        return res.status(200).json({
+            startingbalance,
+            transacoes: transacoesDoMes,
+            referenceMonth: mes,
+            recerenceYear: ano
+        });
+
+    } catch (error) {
+        console.error("Erro na busca mensal:", error);
+        return res.status(500).json({ error: "Erro ao verificar dados mensais, tente depois pai" });
+    }
+});
+
 app.put('/api/financeiro/:id', authMiddleware, validar(transactionSchema), async (req, res) => {
     const { id } = req.params
     const updateIncome = req.body
