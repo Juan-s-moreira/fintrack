@@ -96,8 +96,8 @@ app.get('/api/financeiro/monthly', authMiddleware, async (req, res) => {
         
         const dataHoje = new Date();
         
-        const mes = req.query.mes ? Number(req.query.mes) : dataHoje.getMonth() + 1;
-        const ano = req.query.ano ? Number(req.query.ano) : dataHoje.getFullYear();
+        const mes = req.query.month ? Number(req.query.month) : dataHoje.getMonth() + 1;
+        const ano = req.query.year ? Number(req.query.year) : dataHoje.getFullYear();
 
        
         const monthBegin = new Date(ano, mes - 1, 1, 0, 0, 0);
@@ -106,10 +106,10 @@ app.get('/api/financeiro/monthly', authMiddleware, async (req, res) => {
         
         const prevTransactions = await FinanceData.find({
             user: userId,
-            createdAt: { $lt: inicioMes }
+            createdAt: { $lt: monthBegin }
         });
 
-        const startingbalance = transacoesAnteriores.reduce((acumulador, item) => {
+        const startingBalance = prevTransactions.reduce((acumulador, item) => {
             if (item.type === 'entrada' || item.type === 'income') {
                 return acumulador + item.value;
             } else {
@@ -120,13 +120,13 @@ app.get('/api/financeiro/monthly', authMiddleware, async (req, res) => {
         
         const monthlyTransactions = await FinanceData.find({
             user: userId,
-            createdAt: { $gte: inicioMes, $lte: fimMes }
+            createdAt: { $gte: monthBegin, $lte: monthEnd }
         }).sort({ createdAt: -1 });
 
        
         return res.status(200).json({
-            startingbalance,
-            transacoes: transacoesDoMes,
+            startingBalance,
+            transactions: monthlyTransactions,
             referenceMonth: mes,
             recerenceYear: ano
         });
