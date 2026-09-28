@@ -1,18 +1,18 @@
-const express = require('express');
-const cors = require('cors')
-const dotenv = require('dotenv');
+import express, {Request, Response} from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
 dotenv.config();
 
 
-const connectDB = require('./database');
+import {connectDB} from './config/database';
+import { User } from './models/User'
+import {IFinanceData} from './models/FinanceData'
 const validar = require('./schemas/validate')
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const User = require('./models/User');
-const { loginSchema, registerSchema } = require('./schemas/usuarioSchemas')
 const authMiddleware = require('./middlewares/auth')
-const FinanceData = require('./models/FinanceData');
+const { loginSchema, registerSchema } = require('./schemas/usuarioSchemas')
 const { transactionSchema } = require('./schemas/financeSchema')
 const { sendVerificationEmail } = require('./services/mailer')
 
@@ -41,7 +41,7 @@ app.post('/api/financeiro/add', authMiddleware, validar(transactionSchema), asyn
     try {
         const { description, value, type } = req.body
 
-        const transactions = await FinanceData.create({
+        const transactions = await IFinanceData.create({
             description,
             value,
             type,
