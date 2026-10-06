@@ -1,9 +1,8 @@
 import {Request, Response} from "express";
 import { Transaction } from "../models/FinanceData";
 
-
 // adicionar
-export const addTRansaction = async (req: Request, res: Response): Promise<void> => {
+export const addTransaction = async (req: Request, res: Response): Promise<void> => {
     try {
         const {
             description,
@@ -40,7 +39,7 @@ export const addTRansaction = async (req: Request, res: Response): Promise<void>
 }
 
 // deletar
-export const deleteTransacion = async (req: Request, res: Response): Promise<void> => {
+export const deleteTransaction = async (req: Request, res: Response): Promise<void> => {
    const { id } = req.params;
    
     try{
@@ -69,7 +68,6 @@ export const getTransactions = async (req: Request, res: Response): Promise<void
         res.status(400).json({ error: 'erro ao verificar transacoes'})
     }
 }
-
 
 // dados mensais
 export const getMonthlyTransactions = async (req: Request, res: Response): Promise<void> => {
@@ -113,7 +111,6 @@ export const getMonthlyTransactions = async (req: Request, res: Response): Promi
 }
 }
 
-
 // atualizar dados
 export const updateTransaction = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
@@ -141,4 +138,3 @@ export const updateTransaction = async (req: Request, res: Response): Promise<vo
         res.status(500).json({error: "erro ao atualizar transacao, tente depois papai"})
     }
 }
-
