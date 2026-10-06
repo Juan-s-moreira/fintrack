@@ -1,8 +1,13 @@
 import { Router } from 'express';
 import { login, register, verifyEmail, forgotPassword } from '../controllers/authController';
 
-const validar = require('../schemas/validate');
-const {loginSchema, registerSchema} = require('../schemas/usuarioSchemas');
+// @ts-ignore
+import validar from '../../schemas/validate.js';
+
+// @ts-ignore
+import usuarioSchemas from '../../schemas/usuarioSchemas.js';
+
+const  {loginSchema, registerSchema} = usuarioSchemas;
 
 const router = Router();
 

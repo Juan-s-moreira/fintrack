@@ -1,6 +1,9 @@
-const axios = require('axios');
+/// <reference types="node" />
 
-const sendVerificationEmail = async (email, code) => {
+import axios from 'axios';
+
+
+export const sendVerificationEmail = async (email: string, code: string): Promise<any> => {
     try {
         const response = await axios.post('https://api.brevo.com/v3/smtp/email', {
             sender: {
@@ -29,10 +32,10 @@ const sendVerificationEmail = async (email, code) => {
         });
 
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Erro na API do Brevo:", error.response?.data || error.message);
         throw new Error("Falha ao enviar e-mail de verificação");
     }
 };
 
-module.exports = { sendVerificationEmail };
+export default sendVerificationEmail;

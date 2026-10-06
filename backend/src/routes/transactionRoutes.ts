@@ -8,9 +8,12 @@ import {
     updateTransaction
 } from '../controllers/transactionControllers';
 
-const authMiddleware = require('../middleware/auth');
-const validar = require('../middleware/validate');
-const transactionSchema = require('../shcemas/financeSchema');
+// @ts-ignore
+import authMiddleware from '../../middlewares/auth';
+// @ts-ignore
+import validar from '../../schemas/validate.js';
+// @ts-ignore
+import transactionSchema from '../../schemas/financeSchema.js';
 
 const router = Router()
 

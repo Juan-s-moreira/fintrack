@@ -3,7 +3,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User";
 
-const {sendVerificationEmail} = require('../services/mailer');
+import { sendVerificationEmail } from "../services/mailer";
+
 
 // rota de olgin
 export const login = async (req: Request, res: Response): Promise<void> => {
