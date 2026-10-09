@@ -1,4 +1,5 @@
 # <img src="./FinTrack/src/assets/wallet-home.png" width="86" height="86"> FinTrack
+
 ## Gestão Financeira para Microempreendedores (MEI)
 
 O **FinTrack** é um **projeto pessoal Full Stack** desenvolvido para oferecer controle financeiro simplificado e seguro para microempreendedores. Como também sou MEI, projetei esta ferramenta para resolver as dores reais de quem precisa de agilidade, clareza e segurança na gestão do fluxo de caixa diário.
@@ -9,9 +10,10 @@ O **FinTrack** é um **projeto pessoal Full Stack** desenvolvido para oferecer c
 
 - **Autenticação Segura:** Registro e login de usuários com criptografia de senhas (Bcrypt) e tokens JWT.
 - **Verificação em Duas Etapas (2FA):** Sistema de validação de conta via e-mail utilizando um código de 6 dígitos.
+- **Recuperação de Senha Completa:** Fluxo em etapas para redefinição segura de senha via código de verificação por e-mail.
 - **Dashboard Financeiro:** Visualização intuitiva de saldos, entradas e saídas.
 - **CRUD de Transações:** Gerenciamento completo (Criar, Ler, Editar e Deletar) de ganhos e despesas.
-- **Interface Dark Mode:** Design responsivo e moderno otimizado para produtividade.
+- **Interface Dark Mode:** Design responsivo e moderno otimizado para produtividade (Tailwind CSS).
 
 ---
 
@@ -26,11 +28,11 @@ O **FinTrack** é um **projeto pessoal Full Stack** desenvolvido para oferecer c
 
 ### Backend
 
-- [Node.js](https://nodejs.org/) & [Express](https://expressjs.com/)
+- [Node.js](https://nodejs.org/) & [Express](https://expressjs.com/) (TypeScript / JavaScript)
 - [MongoDB Atlas](https://www.mongodb.com/atlas) (Banco de Dados NoSQL)
 - [Mongoose](https://mongoosejs.com/) (Modelagem de dados)
-- [Brevo API](https://www.brevo.com/) (Disparo de e-mails transacionais)
-- [JWT](https://jwt.io/) (Autenticação)
+- [Brevo API](https://www.brevo.com/) (Disparo de e-mails transacionais e códigos OTP)
+- [JWT](https://jwt.io/) & [Bcrypt](https://github.com/dcodeIO/bcrypt.js) (Autenticação e segurança)
 
 ---
 
@@ -69,6 +71,7 @@ MONGO_URI=seu_link_do_mongodb
 JWT_SECRET=sua_chave_secreta
 BREVO_API_KEY=sua_chave_api_brevo
 EMAIL_USER=seu_email_validado@gmail.com
+PORT=3000
 
 Inicie o servidor
 
