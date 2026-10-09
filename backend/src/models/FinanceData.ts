@@ -51,7 +51,7 @@ const TransactionSchema = new Schema<IFinanceData>({
     paymentMethod: {
         type: String,
         required: true,
-        enum: ['credit_card', 'debit_card', 'pix', 'boleto', 'dinheiro']
+        enum: ['credit_card', 'debit_card', 'Pix', 'boleto', 'dinheiro']
     },
     isRecurring: {
         type: Boolean,

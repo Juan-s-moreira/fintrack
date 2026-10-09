@@ -72,7 +72,7 @@ export const getTransactions = async (req: Request, res: Response): Promise<void
 // dados mensais
 export const getMonthlyTransactions = async (req: Request, res: Response): Promise<void> => {
     try {
-        const userId = (req as any).userId
+        const userId = (req as any).user.id
         const currentDate = new Date();
 
         const mes = req.query.month ? Number(req.query.month) : currentDate.getMonth() + 1  
