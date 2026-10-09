@@ -177,3 +177,63 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
         res.status(500).json({ error: 'ihh deu ruim na recuperaco de senha, tenta de novo' })
     }
 }
+
+// reset senha
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+    const { email, code, newPassword } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            res.status(404).json({ error: 'ihh nao tem esse email aqui, painho' });
+            return;
+        }
+
+        if (user.verificationCode !== code) {
+            res.status(400).json({ error: 'codigo invalido ou incorreto, painho' });
+            return;
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        user.password = hashedPassword;
+        user.verificationCode = undefined;
+        await user.save();
+
+        res.status(200).json({
+            message: 'senha redefinida com sucesso, painho, pode logar'
+        });
+    } catch (error) {
+        console.error('erro ao resetar a senha, painho', error);
+        res.status(500).json({ error: 'ihh deu ruim no reset da senha aqui em, tenta de novo' });
+    }
+};
+
+// codigo de recuperacao
+// verificar código de recuperação de senha
+export const verifyResetCode = async (req: Request, res: Response): Promise<void> => {
+    const { email, code } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            res.status(404).json({ error: 'ihh nao tem esse email aqui, painho' });
+            return;
+        }
+
+        if (user.verificationCode !== code) {
+            res.status(400).json({ error: 'codigo invalido ou incorreto, painho' });
+            return;
+        }
+
+        res.status(200).json({
+            message: 'codigo valido, painho! pode alterar a senha'
+        });
+    } catch (error) {
+        console.error('erro ao verificar codigo, painho', error);
+        res.status(500).json({ error: 'ihh deu ruim na verificacao, tenta de novo' });
+    }
+};

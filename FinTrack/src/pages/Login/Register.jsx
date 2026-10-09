@@ -38,7 +38,7 @@ const Register = () => {
         setIsLoading(true)
 
         try {
-            const { status } = await api.post('/register', {
+            const { status } = await api.post('/auth/register', {
                 email: email,
                 password: password,
                 repeat_password: repeatPassword

@@ -7,6 +7,11 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess, incomeToEdit }) =>
 
   const [description, setDescription] = useState('');
   const [value, setValue] = useState('');
+  const [category, setCategory] = useState('Alimentação');
+  const [customCategory, setCustomCategory] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('Pix');
+  const [installments, setInstallments] = useState('');
+  const [statementFile, setStatementFile] = useState(null);
 
   const isEditing = !!incomeToEdit;
 
@@ -14,9 +19,18 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess, incomeToEdit }) =>
     if (isEditing && incomeToEdit) {
       setDescription(incomeToEdit.description);
       setValue(incomeToEdit.value);
+      setCategory(incomeToEdit.category || 'Alimentação');
+      setCustomCategory(incomeToEdit.customCategory || '');
+      setPaymentMethod(incomeToEdit.paymentMethod || 'Pix');
+      setInstallments(incomeToEdit.installments || '');
     } else {
       setDescription('');
       setValue('');
+      setCategory('Alimentação');
+      setCustomCategory('');
+      setPaymentMethod('Pix');
+      setInstallments('');
+      setStatementFile(null);
     }
   }, [isOpen, isEditing, incomeToEdit]);
 
@@ -26,10 +40,15 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess, incomeToEdit }) =>
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const finalCategory = category === 'other' ? (customCategory.trim() || 'Outros') : category;
+
     const transactionData = {
       description,
       value: Number(value),
-      type: isEditing ? incomeToEdit.type : type
+      type: isEditing ? incomeToEdit.type : type,
+      category: finalCategory,
+      paymentMethod,
+      installments: installments ? { current: 1, total: Number(installments) } : undefined,
     };
 
     try {
@@ -121,6 +140,76 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess, incomeToEdit }) =>
               onChange={(e) => setValue(e.target.value)}
               required
               step="0.01"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className='text-gray-400 text-sm ml-1 block mb-1'>Category</label>
+              <select
+                className="w-full bg-gray-900 text-white border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="Alimentacao">Alimentação</option>
+                <option value="Transporte">Transporte</option>
+                <option value="Lazer">Lazer</option>
+                <option value="Utilidades">Utilidades</option>
+                <option value="Saude">Saúde</option>
+                <option value="Educacao">Educação</option>
+                <option value="other">Outro (personalizado)</option>
+              </select>
+            </div>
+            <div>
+              <label className='text-gray-400 text-sm ml-1 block mb-1'>Payment</label>
+              <select
+                className="w-full bg-gray-900 text-white cursor-pointer border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-blue-500 transition-colors"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              >
+                <option value="Pix">Pix</option>
+                <option value="Credit Card">Cartão de Crédito</option>
+                <option value="Debit Card">Cartão de Débito</option>
+                <option value="Cash">Dinheiro</option>
+                <option value="Bank Transfer">Transferência Bancária</option>
+              </select>
+            </div>
+          </div>
+
+          {category === 'other' && (
+            <div>
+              <label className='text-gray-400 text-sm ml-1 block mb-1'>Custom Category</label>
+              <input
+                type="text"
+                placeholder="Ex: tatuagem, freela, Pet, Viagem..."
+                className="w-full bg-gray-900 text-white border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-blue-500 transition-colors"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                required={category === 'other'}
+              />
+            </div>
+          )}
+          {!isIncome && (
+
+            <div>
+              <label className='text-gray-400 text-sm ml-1 block mb-1'> Quantidade de parcelas</label>
+              <input type="number"
+                placeholder="Ex: 12"
+                min="1"
+                max="99"
+                className='w-full bg-gray-900 text-white border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer'
+                value={installments}
+                onChange={(e) => setInstallments(e.target.value)}
+              />
+            </div>
+          )}
+
+          <div>
+            <label className='text-gray-400 text-sm ml-1 block mb-1'>upload de Extrato</label>
+            <input type="file"
+              accept='.pdf,.csv,image/*'
+              className='w-full bg-gray-900 text-gray-400 border border-gray-700 rounded-xl p-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer '
+              onChange={(e) => setStatementFile(e.target.files[0])}
             />
           </div>
 

@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 connectDB()
 
 
-app.use('/api', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/financeiro', transactionRoutes);
 
 app.get('/', (req: Request, res: Response) => {

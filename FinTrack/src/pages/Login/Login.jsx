@@ -2,6 +2,8 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import api from "../../services/apii";
 import heroImage from '../../assets/wallet-home.png';
+import ForgotPasswordModal from '../../components/ForgotPasswordModal'
+
 
 
 const Login = () => {
@@ -11,6 +13,7 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false);
+    const [isForgotOpen, setIsForgotOpen] = useState(false)
     const navigate = useNavigate()
 
     const handleLogin = async (e) => {
@@ -18,7 +21,7 @@ const Login = () => {
         setIsLoading(true)
 
         try {
-            const response = await api.post('/login', { email, password })
+            const response = await api.post('/auth/login', { email, password })
             const token = response.data.token
 
             localStorage.setItem('token', token)
@@ -93,6 +96,16 @@ const Login = () => {
                                 </div>
                             </div>
 
+                            <div className="text-sm text-right">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsForgotOpen(true)}
+                                    className="font-medium text-blue-500 hover:text-blue-400 transition-colors cursor-pointer bg-transparent border-none"
+                                >
+                                    Esqueceu a senha?
+                                </button>
+                            </div>
+
                         </div>
 
                         <div>
@@ -135,7 +148,10 @@ const Login = () => {
 
             </div>
 
-
+            <ForgotPasswordModal
+                isOpen={isForgotOpen}
+                onClose={() => setIsForgotOpen(false)}
+            />
 
         </div>
     )
