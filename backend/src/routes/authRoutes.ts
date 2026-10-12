@@ -2,12 +2,12 @@ import { Router } from 'express';
 import { login, register, verifyEmail, forgotPassword, resetPassword, verifyResetCode } from '../controllers/authController';
 
 // @ts-ignore
-import validar from '../../schemas/validate.js';
+import {validar} from '../../schemas/validate';
 
 // @ts-ignore
-import usuarioSchemas from '../../schemas/usuarioSchemas.js';
+import {loginSchema, registerSchema} from '../../schemas/usuarioSchemas';
 
-const  {loginSchema, registerSchema} = usuarioSchemas;
+
 
 const router = Router();
 

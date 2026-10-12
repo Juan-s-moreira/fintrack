@@ -9,18 +9,18 @@ import {
 } from '../controllers/transactionControllers';
 
 // @ts-ignore
-import authMiddleware from '../../middlewares/auth';
+import {auth} from '../../middlewares/auth';
 // @ts-ignore
-import validar from '../../schemas/validate.js';
+import {validar} from '../../schemas/validate';
 // @ts-ignore
-import transactionSchema from '../../schemas/financeSchema.js';
+import {transactionSchema} from '../../schemas/financeSchema';
 
 const router = Router()
 
-router.post('/add', authMiddleware, validar(transactionSchema), addTransaction);
-router.get('/get', authMiddleware, getTransactions);
-router.get('/monthly', authMiddleware, getMonthlyTransactions);
-router.put('/:id', authMiddleware, validar(transactionSchema), updateTransaction);
-router.delete('/:id', authMiddleware, deleteTransaction);
+router.post('/add', auth, validar(transactionSchema), addTransaction);
+router.get('/get', auth, getTransactions);
+router.get('/monthly', auth, getMonthlyTransactions);
+router.put('/:id', auth, validar(transactionSchema), updateTransaction);
+router.delete('/:id', auth, deleteTransaction);
 
 export default router;
