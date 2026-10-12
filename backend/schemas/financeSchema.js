@@ -34,7 +34,10 @@ const transactionSchema = Joi.object({
     paymentMethod: Joi.string().optional().allow(''),
     isRecurring: Joi.boolean().optional(),
     recurrenceFrequency: Joi.string().optional().allow(''),
-    installments: Joi.number().optional().allow(null),
+    installments: Joi.object({
+        current: Joi.number().required(),
+        total: Joi.number().required()
+    }).optional().allow(null),
     fitId: Joi.string().optional().allow('')
 });
 

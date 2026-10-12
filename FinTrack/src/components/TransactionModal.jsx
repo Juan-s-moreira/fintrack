@@ -48,7 +48,7 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess, incomeToEdit }) =>
       type: isEditing ? incomeToEdit.type : type,
       category: finalCategory,
       paymentMethod,
-      installments: installments ? { current: 1, total: Number(installments) } : undefined,
+      installments: (!isIncome && installments) ? { current: 1, total: Number(installments) } : undefined,
     };
 
     try {
@@ -143,38 +143,41 @@ const TransactionModal = ({ isOpen, onClose, type, onSuccess, incomeToEdit }) =>
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className='text-gray-400 text-sm ml-1 block mb-1'>Category</label>
-              <select
-                className="w-full bg-gray-900 text-white border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <option value="Alimentacao">Alimentação</option>
-                <option value="Transporte">Transporte</option>
-                <option value="Lazer">Lazer</option>
-                <option value="Utilidades">Utilidades</option>
-                <option value="Saude">Saúde</option>
-                <option value="Educacao">Educação</option>
-                <option value="other">Outro (personalizado)</option>
-              </select>
+          {!isIncome && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className='text-gray-400 text-sm ml-1 block mb-1'>Category</label>
+                <select
+                  className="w-full bg-gray-900 text-white border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                >
+                  <option value="Alimentacao">Alimentação</option>
+                  <option value="Transporte">Transporte</option>
+                  <option value="Lazer">Lazer</option>
+                  <option value="Utilidades">Utilidades</option>
+                  <option value="Saude">Saúde</option>
+                  <option value="Educacao">Educação</option>
+                  <option value="other">Outro (personalizado)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className='text-gray-400 text-sm ml-1 block mb-1'>Payment</label>
+                <select
+                  className="w-full bg-gray-900 text-white cursor-pointer border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-blue-500 transition-colors"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                >
+                  <option value="Pix">Pix</option>
+                  <option value="Credit Card">Cartão de Crédito</option>
+                  <option value="Debit Card">Cartão de Débito</option>
+                  <option value="Cash">Dinheiro</option>
+                  <option value="Bank Transfer">Transferência Bancária</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <label className='text-gray-400 text-sm ml-1 block mb-1'>Payment</label>
-              <select
-                className="w-full bg-gray-900 text-white cursor-pointer border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-blue-500 transition-colors"
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              >
-                <option value="Pix">Pix</option>
-                <option value="Credit Card">Cartão de Crédito</option>
-                <option value="Debit Card">Cartão de Débito</option>
-                <option value="Cash">Dinheiro</option>
-                <option value="Bank Transfer">Transferência Bancária</option>
-              </select>
-            </div>
-          </div>
+          )}
 
           {category === 'other' && (
             <div>

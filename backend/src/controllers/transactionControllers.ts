@@ -16,26 +16,43 @@ export const addTransaction = async (req: Request, res: Response): Promise<void>
             fitId
         } = req.body;
 
-        const transaction = await Transaction.create({
-            description,
-            value,
-            type,
-            category: category || 'other',
-            paymentMethod: paymentMethod,
-            isRecurring: isRecurring || false,
-            recurrenceFrequency: isRecurring ? recurrenceFrequency : undefined,
-            installments,
-            userId: ( req as any).user.id
-        })
+        const userId = (req as any).user.id;
+        
+        const totalInstallments = installments && installments.total ? Number(installments.total) : 1;
+        const createdTransactions = [];
+
+        for (let i = 0; i < totalInstallments; i++) {
+            const transactionDate = new Date();
+            transactionDate.setMonth(transactionDate.getMonth() + i);
+
+            const transaction = await Transaction.create({
+                description: totalInstallments > 1 ? `${description} (${i + 1}/${totalInstallments})` : description,
+                value,
+                type,
+                category: category || 'other',
+                paymentMethod: paymentMethod,
+                isRecurring: isRecurring || false,
+                recurrenceFrequency: isRecurring ? recurrenceFrequency : undefined,
+                installments: totalInstallments > 1 ? {
+                    current: i + 1,
+                    total: totalInstallments
+                } : undefined,
+                fitId: i === 0 ? fitId : undefined,
+                userId,
+                createdAt: transactionDate 
+            });
+
+            createdTransactions.push(transaction);
+        }
 
         res.status(200).json({
-            message: 'Dado adicionado com sucesso, painho',
-            transactions : transaction,
-        })
+            message: 'Dados adicionados com sucesso, painho',
+            transactions: createdTransactions,
+        });
     } catch (error) {
-    console.error("Erro ao adicionar transação, painho:", error);
-    res.status(400).json({error: "erro ao adicionar"})
-}
+        console.error("Erro ao adicionar transação, painho:", error);
+        res.status(400).json({ error: "erro ao adicionar" });
+    }
 }
 
 // deletar
